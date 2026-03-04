@@ -53,29 +53,26 @@
     font-weight: bold;
     text-transform: uppercase;
 }
-/* État de base du menu (Caché) */
 nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 70px; /* Assure-toi qu'il a une hauteur */
+    height: 70px;
     background-color: white;
     border-top: 1px solid #e5e7eb;
     z-index: 50;
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    
-    /* On le cache par défaut */
-    transform: translateY(100%); 
-    opacity: 0;
-    pointer-events: none; /* Empêche de cliquer dessus quand il est caché */
+    /* La barre est visible normalement */
+    transform: translateY(0); 
+    opacity: 1;
 }
 
-/* État quand le menu doit être là (Visible) */
-.nav-visible {
-    transform: translateY(0) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
+/* On ne crée qu'une seule classe pour la CACHER */
+.nav-hidden {
+    transform: translateY(100%) !important;
+    opacity: 0 !important;
+    pointer-events: none;
 }
     </style>
 </head>
@@ -163,7 +160,7 @@ nav {
                 </div>
 
 
-                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                <div class="card-tournoi rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
                     <div onclick="toggleDetails('t2', this)" class="p-6 cursor-pointer flex justify-between items-center">
                         <div class="flex items-center gap-4">
                             <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
@@ -416,12 +413,12 @@ nav {
 
 </div>
 
-    <nav class="fixed bottom-0 w-full h-20 bg-white/90 backdrop-blur-md border-t border-[#00AEEF]/20 flex justify-around items-center rounded-t-[2.5rem] shadow-2xl z-40">
-        <button onclick="showTab('section-infos')" class="tab-button flex-col items-center">
-            <span class="text-2xl mb-1">ℹ️</span>
-            <span class="text-[10px] font-black uppercase text-gray-400">Infos</span>
+    <nav id="main-nav" class="fixed bottom-0 inset-x-0 bg-white border-t flex justify-around items-center py-2 z-50 transition-transform duration-300 translate-y-0">        
+        <button onclick="showTab('section-infos')" class="tab-button flex flex-col items-center">
+             <span class="text-2xl mb-1">ℹ️</span>
+             <span class="text-[10px] font-black uppercase text-gray-400">Infos</span>
         </button>
-        <button onclick="showTab('section-tournois')" class="tab-button flex-col items-center">
+        <button onclick="showTab('section-tournois')" class="tab-button flex flex-col items-center">
             <span class="text-2xl mb-1" style="filter: drop-shadow(0 0 5px #00AEEF);">🏆</span>
             <span class="text-[10px] font-black uppercase text-[#00AEEF]">Tournois</span>
         </button>
@@ -445,17 +442,39 @@ nav {
     <script>
 
     function showTab(tabId) {
-    alert("Le bouton fonctionne ! Tu as cliqué sur : " + tabId);
+    // 1. Cacher toutes les sections
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+    });
+
+    // 2. Montrer la section cliquée
+    const target = document.getElementById(tabId);
+    if (target) {
+        target.classList.remove('hidden');
+    }
+
+    // 3. GESTION DE LA BARRE
+    const navBar = document.querySelector('nav');
+    if (navBar) {
+        if (tabId === 'section-infos') {
+            // Sur l'accueil, on la cache pour voir la photo de plage
+            navBar.classList.add('nav-hidden');
+        } else {
+            // Sur tous les autres onglets, on s'assure qu'elle est visible
+            navBar.classList.remove('nav-hidden');
+        }
+    }
 }
 
-// 2. LA FONCTION POUR LE SCROLL (Sur la page Infos)
 function handleScroll(container) {
-    const navMenu = document.querySelector('nav');
-    if (navMenu && document.getElementById('section-infos').classList.contains('active')) {
+    const navBar = document.querySelector('nav');
+    if (navBar && document.getElementById('section-infos').offsetParent !== null) {
         if (container.scrollTop > 50) {
-            navMenu.classList.add('nav-visible');
+            // Si on scrolle, on enlève la classe qui cache la barre
+            navBar.classList.remove('nav-hidden');
         } else {
-            navMenu.classList.remove('nav-visible');
+            // Si on est tout en haut, on la cache
+            navBar.classList.add('nav-hidden');
         }
     }
 }
