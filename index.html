@@ -433,6 +433,18 @@ nav {
 
     <script>
     function showTab(tabId) {
+        console.log("Changement d'onglet vers : " + tabId);
+        // On cache toutes les sections
+        document.querySelectorAll('.tab-content').forEach(section => {
+            section.classList.add('hidden');
+        });
+        // On affiche la bonne
+        const target = document.getElementById(tabId);
+        if (target) {
+            target.classList.remove('hidden');
+        }
+    }
+    function showTab(tabId) {
     // 1. On cache toutes les sections et on enlève le style actif des boutons
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'text-blue-600'));
@@ -452,7 +464,6 @@ nav {
         navMenu.classList.add('nav-visible');
     }
 }
-
     function openForm(urlLien) {
         console.log("Ouverture du lien : " + urlLien);
         const iframe = document.getElementById('googleFormIframe');
