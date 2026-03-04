@@ -10,6 +10,7 @@
         .font-sport { font-family: 'Bangers', cursive; letter-spacing: 2px; }
         .card-beach { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
         .btn-beach { background-color: #00AEEF; color: white; }
+        .btn-tournoi { background-color: #001f3d; color: white;}
         .hidden { display: none; } /* La règle d'or pour cacher les tiroirs */
 
        /* Animation fluide et design épuré */
@@ -53,27 +54,300 @@
     font-weight: bold;
     text-transform: uppercase;
 }
+/* Empêche le rebond élastique et le fond bleu au scroll */
+html, body {
+    overscroll-behavior: none;
+    background-color: white; /* Force le fond en blanc partout */
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* On laisse le scroll aux sections, pas au body */
+}
+
 nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 70px;
+    height: 75px;
     background-color: white;
     border-top: 1px solid #e5e7eb;
-    z-index: 50;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    /* La barre est visible normalement */
-    transform: translateY(0); 
-    opacity: 1;
+    z-index: 9999; /* On la met tout en haut de la pile */
+    
+    /* ... tes autres styles ... */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    z-index: 9999;
+    
+    /* ÉTAT CACHÉ PAR DÉFAUT */
+    transform: translateY(100%);
+    opacity: 0;
+    display: none; /* LA BARRE N'EXISTE PAS AU DÉBUT */
 }
 
-/* On ne crée qu'une seule classe pour la CACHER */
-.nav-hidden {
-    transform: translateY(100%) !important;
-    opacity: 0 !important;
-    pointer-events: none;
+/* La classe qui REND la barre active et cliquable */
+.nav-visible {
+    display: flex !important; /* Elle réapparaît physiquement */
+    transform: translateY(0) !important;
+    opacity: 1 !important;
 }
+
+.hidden {
+    display: none !important;
+}
+
+/* On s'assure que les sections prennent toute la place */
+.tab-content {
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto; /* Permet de scroller à l'intérieur de chaque onglet */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-close {
+    background: #f3f4f6;
+    border: none;
+    font-size: 20px;
+    padding: 10px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.table-container { padding: 20px; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th { text-align: left; padding: 12px; background: #f9fafb; color: #6b7280; }
+td { padding: 12px; border-bottom: 1px solid #f3f4f6; }
+
+/* Le bouton dans la section Tournois */
+.btn-tableau {
+    background-color: #1e3a8a !important; /* Bleu foncé profond */
+    color: white !important;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto; /* Centre le bouton */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    position: relative;
+}
+
+/* La fenêtre modale (Page du tableau) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 99999; /* Tout en haut de la pile */
+    transition: transform 0.4s ease;
+    transform: translateY(100%); /* Cachée en bas */
+    display: block !important;
+}
+
+/* Quand la fenêtre est ouverte */
+.modal-overlay.open {
+    transform: translateY(0);
+}
+
+.modal-content-beach {
+    background: #f8fafc;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* La fenêtre qui contient tout le contenu de la modal */
+.modal-body-beach {
+    flex: 1;
+    overflow-y: auto; /* PERMET DE DESCENDRE LA PAGE */
+    -webkit-overflow-scrolling: touch; /* Rend le scroll fluide sur iPhone */
+    padding-bottom: 50px; /* Espace en bas pour ne pas coller au bord */
+}
+
+/* On s'assure que la modal fait bien toute la hauteur */
+.modal-content-beach {
+    height: 100vh; /* Prend toute la hauteur de l'écran */
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header-beach {
+    background: #002D58; /* Ton bleu foncé */
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.tournament-name {
+    text-align: center;
+    padding: 20px;
+    color: #002D58;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.beach-table-native {
+    width: 95%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.beach-table-native th {
+    background: #e2e8f0;
+    color: #475569;
+    padding: 12px;
+    font-size: 0.8rem;
+}
+
+.beach-table-native td {
+    padding: 15px 12px;
+    text-align: center;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+}
+
+.text-left { text-align: left !important; }
+.font-bold { font-weight: bold; color: #002D58; }
+
+.update-footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-top: 20px;
+}
+
+/* Style pour la ligne de séparation des poules */
+.poule-divider {
+    background-color: #f1f5f9 !important; /* Gris très clair */
+}
+
+.poule-divider td {
+    color: #002D58 !important; /* Ton bleu marine */
+    font-weight: 800 !important;
+    text-align: left !important;
+    padding-left: 15px !important;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    border-top: 2px solid #e2e8f0;
+    text-transform: uppercase;
+}
+
+/* On s'assure que le tableau ne dépasse pas */
+.beach-table-native {
+    table-layout: fixed; /* Force les colonnes à rester alignées */
+}
+
+.beach-tabs {
+    display: flex;
+    background: #f1f5f9;
+    padding: 5px;
+    margin: 10px 15px;
+    border-radius: 12px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    font-weight: bold;
+    color: #64748b;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.tab-btn.active {
+    background: white;
+    color: #002D58;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.hidden { display: none; }
+
+.level-separator {
+    margin: 20px 15px 10px 15px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #002D58;
+    border-bottom: 2px solid #002D58;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+}
+
+        /* STYLE FINALE */
+/* Container scrollable horizontalement */
+.bracket-container {
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 50px;
+    padding: 20px;
+    overflow-x: auto;
+    align-items: center;
+    min-height: 650px;
+    background: #f8fafc;
+}
+
+.column-wrapper { flex: 0 0 200px; }
+
+.bracket-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 850px; /* Hauteur pour 8 matchs max (1/8e) */
+}
+
+/* Cartes de match */
+.bracket-match {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Lignes de connexion (Pseudo-connecteurs) */
+.bracket-match::after { content: ""; position: absolute; right: -50px; top: 50%; width: 50px; height: 2px; background: #cbd5e1; }
+.bracket-match::before { content: ""; position: absolute; left: -25px; top: 50%; width: 25px; height: 2px; background: #cbd5e1; }
+
+.column-wrapper:first-child .bracket-match::before,
+.column-wrapper:last-child .bracket-match::after { display: none; }
+
+/* Équipes et Scores */
+.b-team { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; }
+.team-name-text { font-weight: 700; font-size: 0.85rem; color: #334155; }
+.b-score { background: #002D58; color: white; padding: 1px 5px; border-radius: 3px; font-weight: bold; min-width: 22px; text-align: center; }
+.vs-divider { border-top: 1px solid #f1f5f9; margin: 4px 0; }
+.level-label { text-align: center; font-weight: 800; color: #002D58; text-transform: uppercase; font-size: 0.75rem; margin-bottom: 10px; }
+
     </style>
 </head>
 <body class="pb-24">
@@ -154,7 +428,7 @@ nav {
                     <div id="t1" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
                         <div class="pb-6 pt-2 grid grid-cols-2 gap-3">
                             <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                            <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                         </div>
                     </div>
                 </div>
@@ -186,7 +460,7 @@ nav {
                                                         </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                                <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                             </div>
                         </div>
                     </div>
@@ -219,7 +493,7 @@ nav {
                                                         </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                                <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                             </div>
                         </div>
                     </div>
@@ -252,7 +526,7 @@ nav {
                                                         </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                                <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                             </div>
                         </div>
                     </div>
@@ -285,7 +559,7 @@ nav {
                                                         </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                                <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                             </div>
                         </div>
                     </div>
@@ -310,7 +584,7 @@ nav {
                         <div class="pt-2 pb-6 space-y-5">
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                                <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                             </div>
                         </div>
                     </div>
@@ -343,7 +617,7 @@ nav {
                                                         </div>
                             <div class="grid grid-cols-2 gap-3">
                             <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                            <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                             </div>
                         </div>
                     </div>
@@ -376,7 +650,7 @@ nav {
                                                         </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                                <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                             </div>
                         </div>
                     </div>
@@ -401,7 +675,7 @@ nav {
                         <div class="pt-2 pb-6 space-y-5">
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
-                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                                <button onclick="openTableau()" class="btn-tournoi py-4 rounded-2xl font-sport text-sm uppercase"> Tableau </button>
                             </div>
                         </div>
                     </div>
@@ -439,43 +713,157 @@ nav {
     </iframe>
     </div>
 
+    <div id="modal-tableau" class="modal-overlay">
+    <div class="modal-content-beach">
+        <div class="modal-header-beach">
+            <span>TOURNOI EN DIRECT</span>
+            <button onclick="closeTableau()" class="btn-close-beach">✕</button>
+        </div>
+
+        <div class="beach-tabs">
+            <button id="tab-poules" class="tab-btn active" onclick="switchTab('poules')">Poules</button>
+            <button id="tab-finale" class="tab-btn" onclick="switchTab('finale')">Phase Finale</button>
+        </div>
+
+        <div class="modal-body-beach">
+            <div id="view-poules" class="view-content">
+                <table class="beach-table-native">
+                    <tbody></tbody>
+                </table>
+            </div>
+
+           <div id="view-finale" class="view-content hidden">
+                <div id="bracket-list">
+                    Chargement des matchs en cours...
+                </div>
+            </div>
+            
+            <p class="update-footer">Mis à jour en direct</p>
+        </div>
+    </div>
+    </div>
+    <select id="select-tournoi" onchange="changerDeTournoi(this.value)">
+        <option value="juillet_lancement">King Calais (03/07)</option>
+        <option value="juillet_loisir">Serie Loisir (04/07)</option>
+        <option value="juillet_open2">Open (05/07)</option>
+        <option value="juillet_serie">Serie 3 (11/07)</option>
+        <option value="juillet_open3">Open (12/07)</option>
+        <option value="juillet_serie2">Open (25/07)</option>
+        <option value="juillet_open4">Open (26/07)</option>
+        <option value="juillet_open5">Open (15/08)</option>
+        <option value="juillet_open6">Open (23/08)</option>
+    </select>
+    
+    <button onclick="revenirALaListe()" class="btn-back">⬅️ Retour aux tournois</button>
+
+<script>
+function revenirALaListe() {
+    document.getElementById('view-results').classList.add('hidden');
+    document.getElementById('view-home').classList.remove('hidden');
+}
+</script>
+
     <script>
 
+// CONFIGURATION DES TOURNOIS
+const TOURNOIS = {
+    'juillet_lancement': {
+        nom: "King - 03 Juillet",
+        urlPoules: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2EpBvqIGF9pBtob_mY9iBEHRJpBRmIC2R0Hx8jUOzISAm5JorV53rVc5J0eXE3VAPjDKpV_ijbNTr/pub?output=csv",
+        urlFinale: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2EpBvqIGF9pBtob_mY9iBEHRJpBRmIC2R0Hx8jUOzISAm5JorV53rVc5J0eXE3VAPjDKpV_ijbNTr/pub?gid=1002400999&single=true&output=csv"
+    },
+    'juillet_loisir': {
+        nom: "Open - 04 Juillet",
+        urlPoules: "URL_AVEC_GID_POULES_12_07",
+        urlFinale: "URL_AVEC_GID_FINALE_12_07"
+    },
+    'juillet_open2': {
+        nom: "Open - 05 Juillet",
+        urlPoules: "URL_AVEC_GID_POULES_02_08",
+        urlFinale: "URL_AVEC_GID_FINALE_02_08"
+    },
+    'juillet_serie': {
+        nom: "Serie 3 - 11 Juillet",
+        urlPoules: "URL_AVEC_GID_POULES_02_08",
+        urlFinale: "URL_AVEC_GID_FINALE_02_08"
+    },
+    'juillet_open3': {
+        nom: "Open - 12 Juillet",
+        urlPoules: "URL_AVEC_GID_POULES_02_08",
+        urlFinale: "URL_AVEC_GID_FINALE_02_08"
+    },
+    'juillet_serie2': {
+        nom: "Serie 2 - 25 Juillet",
+        urlPoules: "URL_AVEC_GID_POULES_02_08",
+        urlFinale: "URL_AVEC_GID_FINALE_02_08"
+    },
+    'juillet_open4': {
+        nom: "Open - 26 Juillet",
+        urlPoules: "URL_AVEC_GID_POULES_02_08",
+        urlFinale: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2EpBvqIGF9pBtob_mY9iBEHRJpBRmIC2R0Hx8jUOzISAm5JorV53rVc5J0eXE3VAPjDKpV_ijbNTr/pub?gid=1002400999&single=true&output=csv"
+    },
+    'aout_open5': {
+        nom: "Open - 15 Août",
+        urlPoules: "URL_AVEC_GID_POULES_02_08",
+        urlFinale: "URL_AVEC_GID_FINALE_02_08"
+    },
+    'aout_open6': {
+        nom: "Blondeel - 23 Août",
+        urlPoules: "URL_AVEC_GID_POULES_02_08",
+        urlFinale: "URL_AVEC_GID_FINALE_02_08"
+    },
+};
+
+// Variable pour savoir quel tournoi est actif (par défaut 'elite')
+let tournoiActuel = 'juillet_lancement';
+
     function showTab(tabId) {
-    // 1. Cacher toutes les sections
+    // 1. On nettoie l'affichage
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.add('hidden');
+        tab.style.display = 'none';
     });
 
-    // 2. Montrer la section cliquée
+    // 2. On affiche la section cible
     const target = document.getElementById(tabId);
     if (target) {
+        target.style.display = 'block';
         target.classList.remove('hidden');
     }
 
-    // 3. GESTION DE LA BARRE
+    // 3. LA BARRE : On la force à RESTER quand on change d'onglet
     const navBar = document.querySelector('nav');
     if (navBar) {
-        if (tabId === 'section-infos') {
-            // Sur l'accueil, on la cache pour voir la photo de plage
-            navBar.classList.add('nav-hidden');
-        } else {
-            // Sur tous les autres onglets, on s'assure qu'elle est visible
-            navBar.classList.remove('nav-hidden');
-        }
+        navBar.style.display = 'flex'; // On assure la présence physique
+        navBar.classList.add('nav-visible'); // On assure la visibilité
     }
 }
 
 function handleScroll(container) {
     const navBar = document.querySelector('nav');
-    if (navBar && document.getElementById('section-infos').offsetParent !== null) {
-        if (container.scrollTop > 50) {
-            // Si on scrolle, on enlève la classe qui cache la barre
-            navBar.classList.remove('nav-hidden');
+    if (!navBar) return;
+
+    const isInfosPage = document.getElementById('section-infos').offsetParent !== null;
+
+    if (isInfosPage) {
+        // Si on est sur Infos, on suit le scroll
+        if (container.scrollTop > 60) {
+            navBar.style.display = 'flex';
+            navBar.classList.add('nav-visible');
         } else {
-            // Si on est tout en haut, on la cache
-            navBar.classList.add('nav-hidden');
+            // On ne la cache que si on est vraiment tout en haut
+            navBar.classList.remove('nav-visible');
+            // On attend que l'animation de descente soit finie pour faire le display:none
+            setTimeout(() => {
+                if (container.scrollTop <= 60 && !navBar.classList.contains('nav-visible')) {
+                    navBar.style.display = 'none';
+                }
+            }, 400);
         }
+    } else {
+        // Sur les autres pages, on ne touche à rien, elle reste visible
+        navBar.style.display = 'flex';
+        navBar.classList.add('nav-visible');
     }
 }
     
@@ -521,6 +909,307 @@ function handleScroll(container) {
     window.scrollTo(0, 0);
 }
 
+function openTableau() {
+    const modal = document.getElementById('modal-tableau');
+    if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden'; // Empêche le scroll du sable derrière
+    }
+}
+
+function closeTableau() {
+    const modal = document.getElementById('modal-tableau');
+    if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = 'auto'; // Redonne le scroll
+    }
+}
+
+async function refreshBeachScores() {
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2EpBvqIGF9pBtob_mY9iBEHRJpBRmIC2R0Hx8jUOzISAm5JorV53rVc5J0eXE3VAPjDKpV_ijbNTr/pub?output=csv';
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.text();
+        const rows = data.split('\n').slice(1); // On ignore la première ligne (les titres)
+
+       let tableBody = "";
+        
+        for (let i = 0; i < rows.length; i++) { // On commence à 0 pour ne rien rater
+            const cols = rows[i].split(',');
+            if (!cols[0]) continue; // Saute les lignes totalement vides
+
+            const premierMot = cols[0].trim().toUpperCase();
+
+            if (premierMot.startsWith("POULE")) {
+                tableBody += `
+                    <tr class="poule-divider">
+                        <td colspan="5">🏐 ${cols[0]}</td>
+                    </tr>`;
+            } 
+            else if (cols.length >= 5 && cols[1].trim() !== "" && !premierMot.startsWith("RANG")) {
+                tableBody += `
+                    <tr>
+                        <td>${cols[0]}</td>
+                        <td class="text-left font-bold">${cols[1]}</td>
+                        <td>${cols[2]}</td>
+                        <td>${cols[3]}</td>
+                        <td>${cols[4]}</td>
+                    </tr>`;
+            }
+        }
+
+        // On injecte les nouvelles lignes dans ton tableau
+        document.querySelector('.beach-table-native tbody').innerHTML = tableBody;
+        
+        // On met à jour l'heure de la dernière modif
+        document.querySelector('.update-footer').innerText = "Mis à jour le " + new Date().toLocaleTimeString();
+
+    } catch (error) {
+        console.error("Erreur de mise à jour des scores :", error);
+    }
+}
+
+async function refreshPoules() {
+    const container = document.getElementById('poules-container');
+    if (!container) return;
+
+    // 1. On récupère l'URL du tournoi actif
+    const url = TOURNOIS[tournoiActuel].urlPoules; 
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.text();
+        const rows = data.split('\n').slice(1); // On ignore la première ligne (les titres)
+
+       let tableBody = "";
+        
+        for (let i = 0; i < rows.length; i++) { // On commence à 0 pour ne rien rater
+            const cols = rows[i].split(',');
+            if (!cols[0]) continue; // Saute les lignes totalement vides
+
+            const premierMot = cols[0].trim().toUpperCase();
+
+            if (premierMot.startsWith("POULE")) {
+                tableBody += `
+                    <tr class="poule-divider">
+                        <td colspan="5">🏐 ${cols[0]}</td>
+                    </tr>`;
+            } 
+            else if (cols.length >= 5 && cols[1].trim() !== "" && !premierMot.startsWith("RANG")) {
+                tableBody += `
+                    <tr>
+                        <td>${cols[0]}</td>
+                        <td class="text-left font-bold">${cols[1]}</td>
+                        <td>${cols[2]}</td>
+                        <td>${cols[3]}</td>
+                        <td>${cols[4]}</td>
+                    </tr>`;
+            }
+        }
+
+        // On injecte les nouvelles lignes dans ton tableau
+        document.querySelector('.beach-table-native tbody').innerHTML = tableBody;
+        
+        // On met à jour l'heure de la dernière modif
+        document.querySelector('.update-footer').innerText = "Mis à jour le " + new Date().toLocaleTimeString();
+
+
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
+
+    } catch (e) {
+        console.error("Erreur Classement:", e);
+        container.innerHTML = "<p>Erreur lors du chargement des classements.</p>";
+    }
+}
+async function refreshPhaseFinale() {
+    const container = document.getElementById('bracket-list');
+    if (!container) return;
+
+    // Sécurité : vérification que le tournoi existe
+    if (!TOURNOIS[tournoiActuel]) {
+        container.innerHTML = "<p style='color:red;'>Erreur : Tournoi non configuré.</p>";
+        return;
+    }
+
+    const url = TOURNOIS[tournoiActuel].urlFinale;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.text();
+        const rows = data.split('\n').slice(1);
+
+        // Tiroirs pour chaque tour
+        const rounds = { 'H': [], 'Q': [], 'D': [], 'F': [] };
+
+        rows.forEach(row => {
+            const cols = row.split(',');
+            if (cols.length < 3) return; // Ignore les lignes vides
+
+            const code = cols[0] ? cols[0].trim().toUpperCase() : "";
+            const s1 = cols[3] ? cols[3].trim() : '-';
+            const s2 = cols[4] ? cols[4].trim() : '-';
+            
+            const matchHTML = `
+                <div class="bracket-match">
+                    <div class="b-team">
+                        <span class="team-name-text">${cols[1] || '?'}</span>
+                        <span class="b-score">${s1}</span>
+                    </div>
+                    <div class="vs-divider"></div>
+                    <div class="b-team">
+                        <span class="team-name-text">${cols[2] || '?'}</span>
+                        <span class="b-score">${s2}</span>
+                    </div>
+                </div>`;
+
+            if (code.startsWith('H')) rounds['H'].push(matchHTML);
+            else if (code.startsWith('Q')) rounds['Q'].push(matchHTML);
+            else if (code.startsWith('D')) rounds['D'].push(matchHTML);
+            else if (code.startsWith('FINALE')) rounds['F'].push(matchHTML);
+        });
+
+        // Construction dynamique de l'affichage
+        const config = [
+            { id: 'H', label: '1/8èmes' },
+            { id: 'Q', label: 'Quarts' },
+            { id: 'D', label: 'Demis' },
+            { id: 'F', label: 'Finale' }
+        ];
+
+        let html = '<div class="bracket-container">';
+        config.forEach(col => {
+            if (rounds[col.id].length > 0) {
+                html += `
+                    <div class="column-wrapper">
+                        <div class="level-label">${col.label}</div>
+                        <div class="bracket-column">${rounds[col.id].join('')}</div>
+                    </div>`;
+            }
+        });
+        html += '</div>';
+
+        container.innerHTML = html;
+
+    } catch (e) {
+        console.error("Erreur chargement :", e);
+        container.innerHTML = "<p>Erreur de connexion aux données.</p>";
+    }
+}
+
+// On appelle la fonction dès que le tableau s'ouvre
+function openTableau() {
+    const modal = document.getElementById('modal-tableau');
+    if (modal) {
+        modal.classList.add('open');
+        refreshBeachScores(); // <--- Lancement de la mise à jour
+    }
+}
+
+function closeTableau() {
+    const modal = document.getElementById('modal-tableau');
+    if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = 'auto'; // On redonne le scroll au fond
+
+        // --- LA REMISE À ZÉRO ICI ---
+        setTimeout(() => {
+            switchTab('poules'); // On force le retour sur l'onglet Poules
+        }, 300); // On attend la fin de l'animation de fermeture (0.3s)
+    }
+}
+
+function switchTab(view) {
+    // 1. On change l'apparence des boutons (le petit fond blanc qui bouge)
+    document.getElementById('tab-poules').classList.remove('active');
+    document.getElementById('tab-finale').classList.remove('active');
+    document.getElementById('tab-' + view).classList.add('active');
+
+    // 2. On récupère les deux zones de contenu
+    const viewPoules = document.getElementById('view-poules');
+    const viewFinale = document.getElementById('view-finale');
+
+    // 3. L'aiguillage
+    if (view === 'poules') {
+        // AFFICHER LES POULES
+        viewPoules.classList.remove('hidden');
+        viewFinale.classList.add('hidden');
+        
+        // On relance le chargement des données des poules
+        if (typeof refreshBeachScores === "function") {
+            refreshBeachScores(); 
+        }
+    } else {
+        // AFFICHER LA PHASE FINALE
+        viewPoules.classList.add('hidden');
+        viewFinale.classList.remove('hidden');
+        
+        // On lance le chargement de ton nouveau lien (GID 1002400999)
+        if (typeof refreshPhaseFinale === "function") {
+            refreshPhaseFinale();
+        }
+    }
+}
+
+function changerDeTournoi(idTournoi) {
+    // 1. On met à jour le tournoi actif
+    tournoiActuel = idTournoi;
+    
+    // 2. On relance le chargement des données
+    refreshPoules();      // Tes fonctions utiliseront TOURNOIS[tournoiActuel]
+    refreshPhaseFinale();
+}
+
+function afficherToutesLesCards() {
+    const container = document.getElementById('container-des-cards');
+    if (!container) return;
+
+    let htmlDesCards = "";
+
+    // On parcourt chaque tournoi de notre liste 'TOURNOIS'
+    for (const [id, infos] of Object.entries(TOURNOIS)) {
+        htmlDesCards += `
+            <div class="card-tournoi">
+                <div class="card-header">
+                    <h3>${infos.nom}</h3>
+                </div>
+                <div class="card-body">
+                    <p>Lieu : Calais Beach</p>
+                    <button class="btn-tableau" onclick="ouvrirTableau('${id}')">
+                        🎯 Voir le Tableau
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    container.innerHTML = htmlDesCards;
+}
+
+function ouvrirTableau(idChoisi) {
+    // 1. On définit le tournoi actif
+    tournoiActuel = idChoisi;
+
+    // 2. NETTOYAGE : On vide les zones d'affichage pour éviter les mélanges
+    const bracketContainer = document.getElementById('bracket-list');
+    const poulesContainer = document.getElementById('poules-container');
+    
+    if (bracketContainer) bracketContainer.innerHTML = "Chargement du tableau...";
+    if (poulesContainer) poulesContainer.innerHTML = "Chargement des classements...";
+
+    // 3. MISE À JOUR DU TITRE
+    const titreHeader = document.getElementById('titre-tournoi-affiche');
+    if (titreHeader) titreHeader.innerText = TOURNOIS[idChoisi].nom;
+
+    // 4. CHARGEMENT DES DONNÉES SPÉCIFIQUES
+    refreshPhaseFinale(); 
+    refreshPoules(); // Cette fonction doit aussi utiliser TOURNOIS[tournoiActuel].urlPoules
+
+    // 5. NAVIGATION
+    document.getElementById('view-home').classList.add('hidden');
+    document.getElementById('view-results').classList.remove('hidden');
+}
   </script>
 </body>
 </html>
