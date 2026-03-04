@@ -432,24 +432,46 @@ nav {
     </div>
 
     <script>
-    function showTab(tabId) {
-    // 1. On cache toutes les sections et on enlève le style actif des boutons
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'text-blue-600'));
+    // 1. LA FONCTION POUR CHANGER D'ONGLET
+function showTab(tabId) {
+    console.log("Tentative d'affichage de : " + tabId);
 
-    // 2. On affiche la section demandée
-    const activeTab = document.getElementById(tabId);
-    activeTab.classList.add('active');
+    // Cacher TOUTES les sections (tab-content)
+    const allTabs = document.querySelectorAll('.tab-content');
+    allTabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.classList.add('hidden'); // On s'assure qu'elles sont cachées
+    });
 
-    // 3. LA GESTION DU MENU (La correction est ici)
+    // Afficher la section demandée
+    const targetTab = document.getElementById(tabId);
+    if (targetTab) {
+        targetTab.classList.remove('hidden');
+        targetTab.classList.add('active');
+    }
+
+    // Gérer l'affichage du menu du bas
     const navMenu = document.querySelector('nav');
-    
-    if (tabId === 'section-infos') {
-        // Sur Infos, on laisse le système de scroll décider (caché par défaut)
-        navMenu.classList.remove('nav-visible'); 
-    } else {
-        // Sur TOUS les autres onglets (Tournois, Contact, etc.), on force l'affichage
-        navMenu.classList.add('nav-visible');
+    if (navMenu) {
+        if (tabId === 'section-infos') {
+            // Sur l'accueil (Infos), on cache le menu pour voir la photo
+            navMenu.classList.remove('nav-visible');
+        } else {
+            // Sur les autres pages, on montre le menu
+            navMenu.classList.add('nav-visible');
+        }
+    }
+}
+
+// 2. LA FONCTION POUR LE SCROLL (Sur la page Infos)
+function handleScroll(container) {
+    const navMenu = document.querySelector('nav');
+    if (navMenu && document.getElementById('section-infos').classList.contains('active')) {
+        if (container.scrollTop > 50) {
+            navMenu.classList.add('nav-visible');
+        } else {
+            navMenu.classList.remove('nav-visible');
+        }
     }
 }
     
@@ -493,17 +515,6 @@ nav {
 
     // 3. (Optionnel) On remonte en haut de page
     window.scrollTo(0, 0);
-}
-function handleScroll(container) {
-    const navMenu = document.querySelector('nav');
-    
-    // Si on a scrollé de plus de 50px, on montre le menu
-    if (container.scrollTop > 50) {
-        navMenu.classList.add('nav-visible');
-    } else {
-        // Sinon (si on remonte tout en haut), on le cache à nouveau
-        navMenu.classList.remove('nav-visible');
-    }
 }
 
   </script>
