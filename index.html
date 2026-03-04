@@ -406,11 +406,11 @@ nav {
 </div>
 
     <nav class="fixed bottom-0 w-full h-20 bg-white/90 backdrop-blur-md border-t border-[#00AEEF]/20 flex justify-around items-center rounded-t-[2.5rem] shadow-2xl z-40">
-        <button onclick="showTab('section-infos')" class="flex flex-col items-center">
+        <button onclick="showTab('section-infos')" class="tab-button flex-col items-center">
             <span class="text-2xl mb-1">ℹ️</span>
             <span class="text-[10px] font-black uppercase text-gray-400">Infos</span>
         </button>
-        <button onclick="showTab('section-tournois')" class="flex flex-col items-center">
+        <button onclick="showTab('section-tournois')" class="tab-button flex-col items-center">
             <span class="text-2xl mb-1" style="filter: drop-shadow(0 0 5px #00AEEF);">🏆</span>
             <span class="text-[10px] font-black uppercase text-[#00AEEF]">Tournois</span>
         </button>
@@ -433,18 +433,6 @@ nav {
 
     <script>
     function showTab(tabId) {
-        console.log("Changement d'onglet vers : " + tabId);
-        // On cache toutes les sections
-        document.querySelectorAll('.tab-content').forEach(section => {
-            section.classList.add('hidden');
-        });
-        // On affiche la bonne
-        const target = document.getElementById(tabId);
-        if (target) {
-            target.classList.remove('hidden');
-        }
-    }
-    function showTab(tabId) {
     // 1. On cache toutes les sections et on enlève le style actif des boutons
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'text-blue-600'));
@@ -464,6 +452,7 @@ nav {
         navMenu.classList.add('nav-visible');
     }
 }
+    
     function openForm(urlLien) {
         console.log("Ouverture du lien : " + urlLien);
         const iframe = document.getElementById('googleFormIframe');
