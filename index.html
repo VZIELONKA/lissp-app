@@ -53,18 +53,29 @@
     font-weight: bold;
     text-transform: uppercase;
 }
-/* Le style de ton menu de navigation */
+/* État de base du menu (Caché) */
 nav {
-    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-    /* On le décale vers le bas par défaut */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px; /* Assure-toi qu'il a une hauteur */
+    background-color: white;
+    border-top: 1px solid #e5e7eb;
+    z-index: 50;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    
+    /* On le cache par défaut */
     transform: translateY(100%); 
     opacity: 0;
+    pointer-events: none; /* Empêche de cliquer dessus quand il est caché */
 }
 
-/* La classe qui fera réapparaître le menu */
+/* État quand le menu doit être là (Visible) */
 .nav-visible {
     transform: translateY(0) !important;
     opacity: 1 !important;
+    pointer-events: auto !important;
 }
     </style>
 </head>
@@ -432,35 +443,9 @@ nav {
     </div>
 
     <script>
-    // 1. LA FONCTION POUR CHANGER D'ONGLET
-function showTab(tabId) {
-    console.log("Tentative d'affichage de : " + tabId);
-
-    // Cacher TOUTES les sections (tab-content)
-    const allTabs = document.querySelectorAll('.tab-content');
-    allTabs.forEach(tab => {
-        tab.classList.remove('active');
-        tab.classList.add('hidden'); // On s'assure qu'elles sont cachées
-    });
-
-    // Afficher la section demandée
-    const targetTab = document.getElementById(tabId);
-    if (targetTab) {
-        targetTab.classList.remove('hidden');
-        targetTab.classList.add('active');
-    }
-
-    // Gérer l'affichage du menu du bas
-    const navMenu = document.querySelector('nav');
-    if (navMenu) {
-        if (tabId === 'section-infos') {
-            // Sur l'accueil (Infos), on cache le menu pour voir la photo
-            navMenu.classList.remove('nav-visible');
-        } else {
-            // Sur les autres pages, on montre le menu
-            navMenu.classList.add('nav-visible');
-        }
-    }
+        
+    function showTab(tabId) {
+    alert("Le bouton fonctionne ! Tu as cliqué sur : " + tabId);
 }
 
 // 2. LA FONCTION POUR LE SCROLL (Sur la page Infos)
