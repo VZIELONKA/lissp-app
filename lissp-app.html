@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; background: linear-gradient(135deg, #eef2f3 0%, #00AEEF 100%); min-height: 100vh; font-family: sans-serif; color: #002D58; }
+        .font-sport { font-family: 'Bangers', cursive; letter-spacing: 2px; }
+        .card-beach { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        .btn-beach { background-color: #00AEEF; color: white; }
+        .hidden { display: none; } /* La règle d'or pour cacher les tiroirs */
+
+       /* Animation fluide et design épuré */
+.details-content { 
+    max-height: 0; 
+    overflow: hidden; 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+    opacity: 0;
+}
+.details-content.open { 
+    max-height: 500px; 
+    opacity: 1;
+    padding-bottom: 20px;
+}
+.arrow { 
+    transition: transform 0.4s; 
+    color: #00AEEF;
+}
+.rotate { transform: rotate(180deg); }
+
+/* Effet de carte premium */
+.card-tournoi {
+    background: white;
+    border: 1px solid rgba(0, 174, 239, 0.1);
+    transition: transform 0.2s ease;
+}
+/* Style pour le tournoi verrouillé */
+.tournoi-locked {
+    filter: grayscale(0.8); /* Grise un peu la carte */
+    opacity: 0.7;
+    pointer-events: none; /* Empêche de cliquer sur TOUTE la carte */
+    position: relative;
+}
+
+.badge-locked {
+    background: #ff4757;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+    </style>
+</head>
+<body class="pb-24">
+
+<div id="app-content" class="pb-24">
+
+  <section id="section-infos" class="tab-content h-[100dvh] overflow-y-auto scroll-smooth bg-white" onscroll="handleScroll(this)">
+    
+    <div class="relative w-full">
+        
+        <div class="sticky top-0 h-[100dvh] w-full overflow-hidden">
+            <img src="https://lh3.googleusercontent.com/d/1TOJYEZhKVNtHe2LU5WsW0o9Z9I7QB-6U" 
+                 class="absolute inset-0 w-full h-full object-cover">
+            
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90"></div>
+            
+            <div class="absolute inset-x-0 top-0 flex justify-center pt-28 px-6">
+                <img src="https://lh3.googleusercontent.com/d/1XlSmOEbGH5OkJz3CzEkNhyCFbhc67Ds_" 
+                     class="w-[85%] max-w-[400px] h-auto object-contain drop-shadow-2xl">
+            </div>
+
+            <div class="absolute bottom-12 inset-x-0 flex flex-col items-center animate-bounce">
+                <span class="text-white text-[10px] uppercase tracking-[0.4em] font-bold mb-1 opacity-80">Découvrir</span>
+                <svg class="w-8 h-8 text-white opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7M19 5l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div id="info-content" class="relative z-20 bg-white min-h-screen px-6 py-10 rounded-t-[30px] shadow-[0_-20px_40px_rgba(0,0,0,0.4)]">
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-8"></div>
+            
+            <h2 class="font-sport text-3xl text-[#002D58] mb-6 uppercase">Le Club</h2>
+            
+            <div class="space-y-6 text-gray-700">
+                <div class="bg-blue-50 p-5 rounded-2xl border-l-4 border-[#002D58]">
+                    <p class="font-bold text-[#002D58]">📍 Plage de Calais</p>
+                    <p class="text-sm">Terrains accessibles face au poste de secours.</p>
+                </div>
+
+                <p class="leading-relaxed">
+                    Le **Lissp Beach Club** est l'association de référence pour la pratique du beach-volley sur la Côte d'Opale. 
+                </p>
+
+                <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdfunPrUOR0aUmspg8XbT8Q5dHcqGuDMSXX6j_f-_bg8TsHyA/viewform', '_blank')" 
+                        class="btn-beach w-full py-5 rounded-2xl font-sport text-xl uppercase shadow-lg">
+                    S'inscrire au club
+                </button>
+                
+                <div class="pt-10 opacity-50 text-center text-xs">
+                    <p>Calendrier des tournois disponible dans l'onglet Événements.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <section id="section-tournois" class="tab-content hidden">
+        <div class="p-4">
+            <h2 class="font-sport text-2xl text-[#002D58] mb-6 uppercase italic">Prochains Tournois</h2>
+
+            <div id="liste-tournois">
+                
+                <div class="card-tournoi rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t1', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Juillet</p>
+                                <p class="text-xl font-sport text-[#002D58]">3</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Lancement Calais'tivales</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">King 2x2 / 3x3</p>
+                            </div>
+                        </div>
+                        <div class="arrow text-xl">▼</div>
+                    </div>
+                    <div id="t1" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pb-6 pt-2 grid grid-cols-2 gap-3">
+                            <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                            <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t2', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Juillet</p>
+                                <p class="text-xl font-sport text-[#002D58]">4</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Tournoi DELPSP</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Série 3 2x2 Loisir</p>
+                            </div>
+                        </div>
+                        <div class="arrow text-xl">🔒</div>
+                    </div>
+                    <div id="t2" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pt-2 pb-6 space-y-5"> <div class="mt-4 border-t border-gray-100 pt-4">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-center mb-3">
+                                 Partenaire Officiel
+                            </p>
+            
+                         <div class="flex items-center justify-center gap-6 px-4">
+                             <img src="https://lh3.googleusercontent.com/d/1-ZrhD6id90gpKtqn32BREc5YWWrqA2hT" alt="Sponsor 1" class="h-8 w-auto object-contain transition-all opacity-80">
+                        </div>
+                                                        </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t3', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Juillet</p>
+                                <p class="text-xl font-sport text-[#002D58]">5</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Tournoi B&B HOTEL</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">3x3 Open</p>
+                            </div>
+                        </div>
+                        <div class="arrow text-xl">🔒</div>
+                    </div>
+                    <div id="t3" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pt-2 pb-6 space-y-5"> <div class="mt-4 border-t border-gray-100 pt-4">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-center mb-3">
+                                 Partenaire Officiel
+                            </p>
+            
+                         <div class="flex items-center justify-center gap-6 px-4">
+                             <img src="https://lh3.googleusercontent.com/d/1c8guDokMAAMAHNLyPiB4NrBWWxKsumBQ" alt="Sponsor 1" class="h-8 w-auto object-contain transition-all opacity-80">
+                        </div>
+                                                        </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+
+
+                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t4', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Juillet</p>
+                                <p class="text-xl font-sport text-[#002D58]">11</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Tournoi BUFFALO</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Série 3 2x2</p>
+                            </div>
+                        </div>
+                        <div class="arrow text-xl">🔒</div>
+                    </div>
+                    <div id="t4" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pt-2 pb-6 space-y-5"> <div class="mt-4 border-t border-gray-100 pt-4">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-center mb-3">
+                                 Partenaire Officiel
+                            </p>
+            
+                         <div class="flex items-center justify-center gap-6 px-4">
+                             <img src="https://lh3.googleusercontent.com/d/1tkV-N9FIHryUCg9FXx-WfwdW5esZzOzM" alt="Sponsor 1" class="h-8 w-auto object-contain transition-all opacity-80">
+                        </div>
+                                                        </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+
+
+                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t5', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Juillet</p>
+                                <p class="text-xl font-sport text-[#002D58]">12</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Tournoi AXA</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">3x3 Open</p>
+                            </div>
+                        </div>
+                        <div class="arrow text-xl">🔒</div>
+                    </div>
+                    <div id="t5" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pt-2 pb-6 space-y-5"> <div class="mt-4 border-t border-gray-100 pt-4">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-center mb-3">
+                                 Partenaire Officiel
+                            </p>
+            
+                         <div class="flex items-center justify-center gap-6 px-4">
+                             <img src="https://lh3.googleusercontent.com/d/1-0el82TKsy9fzvgMdezJxLRAROxfx4vv" alt="Sponsor 1" class="h-8 w-auto object-contain transition-all opacity-80">
+                        </div>
+                                                        </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+
+
+                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t6', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Juillet</p>
+                                <p class="text-xl font-sport text-[#002D58]">25</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Tournoi</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Série 2 2x2 ?</p>
+                            </div>
+                        </div>
+                        <div class="arrow text-xl">🔒</div>
+                    </div>
+                    <div id="t6" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pt-2 pb-6 space-y-5">
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+
+
+                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t7', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Juillet</p>
+                                <p class="text-xl font-sport text-[#002D58]">26</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Tournoi CASINO</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">3x3 Open</p>
+                            </div>
+                        </div>
+                            <div class="arrow text-xl">🔒</div>
+                    </div>
+                    <div id="t7" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pt-2 pb-6 space-y-5"> <div class="mt-4 border-t border-gray-100 pt-4">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-center mb-3">
+                                 Partenaire Officiel
+                            </p>
+            
+                         <div class="flex items-center justify-center gap-6 px-4">
+                             <img src="https://lh3.googleusercontent.com/d/1-QvLuPQKKqmMnSchE-PrxRkFg3Olc0Rz" alt="Sponsor 1" class="h-8 w-auto object-contain transition-all opacity-80">
+                        </div>
+                                                        </div>
+                            <div class="grid grid-cols-2 gap-3">
+                            <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                            <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+
+
+                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t8', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Août</p>
+                                <p class="text-xl font-sport text-[#002D58]">15</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Tournoi TYK</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">3x3 Open</p>
+                            </div>
+                        </div>
+                            <div class="arrow text-xl">🔒</div>
+                    </div>
+                    <div id="t8" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pt-2 pb-6 space-y-5"> <div class="mt-4 border-t border-gray-100 pt-4">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-center mb-3">
+                                 Partenaire Officiel
+                            </p>
+            
+                         <div class="flex items-center justify-center gap-6 px-4">
+                             <img src="https://lh3.googleusercontent.com/d/1LVnzqYkZ19QS_Fk1-Tw_TeWJNSAMBUUn" alt="Sponsor 1" class="h-8 w-auto object-contain transition-all opacity-80">
+                        </div>
+                                                        </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+
+
+                <div class="card-tournoi tournoi-locked rounded-[2.5rem] shadow-sm mb-4 overflow-hidden bg-white border border-gray-100">
+                    <div onclick="toggleDetails('t9', this)" class="p-6 cursor-pointer flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#00AEEF]/10 p-3 rounded-2xl text-center min-w-[60px]">
+                                <p class="text-[10px] font-black uppercase text-[#00AEEF]">Août</p>
+                                <p class="text-xl font-sport text-[#002D58]">23</p>
+                            </div>
+                            <div>
+                                <h4 class="font-sport text-xl text-[#002D58] uppercase">Tournoi BLONDEEL</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">3x3 Open</p>
+                            </div>
+                        </div>
+                            <div class="arrow text-xl">🔒</div>
+                    </div>
+                    <div id="t9" class="details-content px-6 bg-gradient-to-b from-white to-[#f8fdff]">
+                        <div class="pt-2 pb-6 space-y-5">
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="openForm('https://docs.google.com/forms/d/e/1FAIpQLSenkbgzl7sxpVVmrM6_6Q_rCPqM_rfquSTMkUxa9n3QIsu_vg/viewform?fbzx=-6873602141222205012')" class="btn-beach py-4 rounded-2xl font-sport text-sm uppercase">Inscription</button>
+                                <button onclick="openForm('URL_TABLEAU')" class="bg-[#002D58] text-white py-4 rounded-2xl font-sport text-sm uppercase">Tableau</button>
+                            </div>
+                        </div>
+                    </div>
+                 </div>    
+
+            </div>
+        </div>
+    </section>
+
+</div>
+
+    <nav class="fixed bottom-0 w-full h-20 bg-white/90 backdrop-blur-md border-t border-[#00AEEF]/20 flex justify-around items-center rounded-t-[2.5rem] shadow-2xl z-40">
+        <button onclick="showTab('section-infos')" class="flex flex-col items-center">
+            <span class="text-2xl mb-1">ℹ️</span>
+            <span class="text-[10px] font-black uppercase text-gray-400">Infos</span>
+        </button>
+        <button onclick="showTab('section-tournois')" class="flex flex-col items-center">
+            <span class="text-2xl mb-1" style="filter: drop-shadow(0 0 5px #00AEEF);">🏆</span>
+            <span class="text-[10px] font-black uppercase text-[#00AEEF]">Tournois</span>
+        </button>
+        <button class="flex flex-col items-center opacity-40">
+            <span class="text-2xl mb-1">📸</span>
+            <span class="text-[10px] font-black uppercase text-gray-400">Photos</span>
+        </button>
+    </nav>
+
+    <div id="formContainer" class="hidden fixed inset-0 z-[60] bg-white flex flex-col">
+        <div class="p-4 bg-[#00AEEF] flex items-center shadow-md">
+            <button onclick="closeForm()" class="text-white font-bold flex items-center uppercase text-sm">
+                <span class="mr-2 text-xl">←</span> Retour
+            </button>
+        </div>
+        <iframe id="googleFormIframe" src="" class="flex-grow w-full border-0">
+        Chargement...
+    </iframe>
+    </div>
+
+    <script>
+    function showTab(tabId) {
+        console.log("Changement d'onglet vers : " + tabId);
+        // On cache toutes les sections
+        document.querySelectorAll('.tab-content').forEach(section => {
+            section.classList.add('hidden');
+        });
+        // On affiche la bonne
+        const target = document.getElementById(tabId);
+        if (target) {
+            target.classList.remove('hidden');
+        }
+    }
+
+    function openForm(urlLien) {
+        console.log("Ouverture du lien : " + urlLien);
+        const iframe = document.getElementById('googleFormIframe');
+        const container = document.getElementById('formContainer');
+
+        if (iframe && urlLien) {
+            iframe.src = urlLien;
+        }
+
+        if (container) {
+            container.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeForm() {
+        const container = document.getElementById('formContainer');
+        if (container) {
+            container.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    function toggleDetails(id, header) {
+    const content = document.getElementById(id);
+    const arrow = header.querySelector('.arrow');
+    content.classList.toggle('open');
+    arrow.classList.toggle('rotate');
+    }
+    function switchTab(tabId) {
+    // 1. On cache toutes les sections
+    document.querySelectorAll('.tab-content').forEach(section => {
+        section.classList.add('hidden');
+    });
+
+    // 2. On affiche uniquement celle demandée
+    document.getElementById('section-' + tabId).classList.remove('hidden');
+
+    // 3. (Optionnel) On remonte en haut de page
+    window.scrollTo(0, 0);
+}
+// Fonction pour cacher/montrer le menu du bas
+function handleScroll(container) {
+    const navMenu = document.querySelector('nav'); // Assure-toi que ton menu est bien dans une balise <nav>
+    if (container.scrollTop > 50) {
+        navMenu.style.transform = "translateY(0)";
+        navMenu.style.opacity = "1";
+    } else {
+        navMenu.style.transform = "translateY(100px)";
+        navMenu.style.opacity = "0";
+    }
+}
+
+// On cache le menu au chargement si on est sur l'onglet Infos
+document.addEventListener('DOMContentLoaded', () => {
+    const navMenu = document.querySelector('nav');
+    navMenu.style.transition = "all 0.4s ease-in-out";
+});
+  </script>
+</body>
+</html>
