@@ -53,6 +53,19 @@
     font-weight: bold;
     text-transform: uppercase;
 }
+/* Le style de ton menu de navigation */
+nav {
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    /* On le décale vers le bas par défaut */
+    transform: translateY(100%); 
+    opacity: 0;
+}
+
+/* La classe qui fera réapparaître le menu */
+.nav-visible {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+}
     </style>
 </head>
 <body class="pb-24">
@@ -473,23 +486,18 @@
     // 3. (Optionnel) On remonte en haut de page
     window.scrollTo(0, 0);
 }
-// Fonction pour cacher/montrer le menu du bas
 function handleScroll(container) {
-    const navMenu = document.querySelector('nav'); // Assure-toi que ton menu est bien dans une balise <nav>
+    const navMenu = document.querySelector('nav');
+    
+    // Si on a scrollé de plus de 50px, on montre le menu
     if (container.scrollTop > 50) {
-        navMenu.style.transform = "translateY(0)";
-        navMenu.style.opacity = "1";
+        navMenu.classList.add('nav-visible');
     } else {
-        navMenu.style.transform = "translateY(100px)";
-        navMenu.style.opacity = "0";
+        // Sinon (si on remonte tout en haut), on le cache à nouveau
+        navMenu.classList.remove('nav-visible');
     }
 }
 
-// On cache le menu au chargement si on est sur l'onglet Infos
-document.addEventListener('DOMContentLoaded', () => {
-    const navMenu = document.querySelector('nav');
-    navMenu.style.transition = "all 0.4s ease-in-out";
-});
   </script>
 </body>
 </html>
